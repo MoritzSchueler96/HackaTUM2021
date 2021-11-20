@@ -6,4 +6,4 @@ prompt = "cool geese"
 imgs = text_to_image(prompt)
 
 # plot_images(imgs)
-save_images(imgs, prompt, folder="output/bbc/", prefix="bbc", summary=True)
+save_images(imgs, prompt, folder="output/geese/", prefix="geese", summary=True)
