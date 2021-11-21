@@ -47,6 +47,23 @@ def login():
     password_input.send_keys(password)
     password_input.submit()
 
+    while EC.text_to_be_present_in_element(
+        (By.XPATH, '//*[@id="slfErrorAlert"]'),
+        "We couldn't connect to Instagram. Make sure you're connected to the internet and try again.",
+    ):
+        if EC.text_to_be_present_in_element(
+            (By.XPATH, '//*[@id="slfErrorAlert"]'),
+            "Please wait a few minutes before you try again.",
+        ):
+            sleep(10)
+
+        sleep(0.5)
+        try:
+            password_input.submit()
+        except:
+            break
+        print("Login failed")
+
 
 login()
 
@@ -54,9 +71,7 @@ login()
 def close_reactivated():
     try:
         not_now_btn = wait.until(
-            EC.element_to_be_clickable(
-                (By.XPATH, '//*[@id="react-root"]/section/main/div/div/div/button')
-            )
+            EC.element_to_be_clickable((By.XPATH, "//a[contains(text(),'Not Now')]"))
         )
         not_now_btn.click()
     except:
@@ -70,7 +85,7 @@ def close_notification():
     try:
         close_noti_btn = wait.until(
             EC.element_to_be_clickable(
-                (By.XPATH, "/html/body/div[5]/div/div/div/div[3]/button[2]")
+                (By.XPATH, "//button[contains(text(),'Not Now')]")
             )
         )
         close_noti_btn.click()
@@ -83,9 +98,7 @@ close_notification()
 
 def close_add_to_home():
     close_addHome_btn = wait.until(
-        EC.element_to_be_clickable(
-            (By.XPATH, "/html/body/div[5]/div/div/div/div[3]/button[2]")
-        )
+        EC.element_to_be_clickable((By.XPATH, "//button[contains(text(),'Cancel')]"))
     )
     close_addHome_btn.click()
 
@@ -100,10 +113,8 @@ new_post_btn = wait.until(
 )
 new_post_btn.click()
 sleep(10)
-for _ in range(1, 20):
-    sleep(0.5)
-    with pyautogui.hold("ctrlright"):
-        pyautogui.press("l")
+with pyautogui.hold("ctrlright"):
+    pyautogui.press("l")
 
 sleep(2)
 pyautogui.write("home/user/Downloads/image.png")
