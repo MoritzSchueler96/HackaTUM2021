@@ -1,0 +1,25 @@
+lr: 0.001 # learning rate
+epochs: 200 # total number of epochs
+noise_dim: 0 # noise vector to concatenate with input prompt features to add diversity
+dim: 128 # dim of th hidden state
+depth: 8 # nb of layers
+dropout: 0 # dropout rate (between 0 and 1), regularization
+cutn: 8 # number of random data augmentations per generated image
+batch_size: 8
+repeat: 1 # number of generated images per prompt
+nb_noise: null # number of unique noise vectors
+diversity_coef: 0 # diversity loss coeficient
+vqgan_config: "vqgan_imagenet_f16_16384.yaml"
+vqgan_checkpoint: "vqgan_imagenet_f16_16384.ckpt"
+clip_model: "ViT-B/32" # can be RN50, RN101, RN50x4, RN50x16, ViT-B/16, ViT-B/32
+
+# In general,  path can be the following:
+# - a path to a text file where each line is a text prompt
+# - a glob pattern (*) of text files where each file is a text prompt
+# - a pkl file created using `tokenize` or `encode_images` or `encode_text_and_images` (see `main.py`)
+path: data/MIT_objects_train.txt
+
+folder: results/example # results path
+log_interval: 100
+model_type: mlp_mixer # can be mlp_mixer, vitgan
+vq_image_size: 16 # grid size of VQGAN latent space  (16x16 here), determines image size. With default VQGAN, grid size is multipled by 16. Thus, image size here is 16*16=256. Make it bigger to have a bigger generated image size, e.g. for 512x512, `vq_image_size` should be 32.
