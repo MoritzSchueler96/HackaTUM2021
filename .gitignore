@@ -128,3 +128,5 @@ dmypy.json
 # Pyre type checker
 .pyre/
 *.bin
+vqgan_imagenet_f16_16384.ckpt
+cc12m_32x1024_vitgan.th
