@@ -8,27 +8,31 @@ from PIL import Image
 import matplotlib.pyplot as plt
 import os
 
-# make sure we use compatible versions
-VQGAN_REPO = "flax-community/vqgan_f16_16384"
-VQGAN_COMMIT_ID = "90cc46addd2dd8f5be21586a9a23e1b95aa506a9"
-
-# make sure we use compatible versions
-DALLE_REPO = "flax-community/dalle-mini"
-DALLE_COMMIT_ID = "4d34126d0df8bc4a692ae933e3b902a1fa8b6114"
-
-# set up tokenizer and model
-tokenizer = BartTokenizer.from_pretrained(DALLE_REPO, revision=DALLE_COMMIT_ID)
-model = CustomFlaxBartForConditionalGeneration.from_pretrained(
-    DALLE_REPO, revision=DALLE_COMMIT_ID
-)
-
-# set up VQGAN
-vqgan = VQModel.from_pretrained(VQGAN_REPO, revision=VQGAN_COMMIT_ID)
-
 path = os.path.dirname(__file__)
 
 
-def encode_images(prompt, n_predictions=9):
+def setup_model():
+    # make sure we use compatible versions
+    VQGAN_REPO = "flax-community/vqgan_f16_16384"
+    VQGAN_COMMIT_ID = "90cc46addd2dd8f5be21586a9a23e1b95aa506a9"
+
+    # make sure we use compatible versions
+    DALLE_REPO = "flax-community/dalle-mini"
+    DALLE_COMMIT_ID = "4d34126d0df8bc4a692ae933e3b902a1fa8b6114"
+
+    # set up tokenizer and model
+    tokenizer = BartTokenizer.from_pretrained(DALLE_REPO, revision=DALLE_COMMIT_ID)
+    model = CustomFlaxBartForConditionalGeneration.from_pretrained(
+        DALLE_REPO, revision=DALLE_COMMIT_ID
+    )
+
+    # set up VQGAN
+    vqgan = VQModel.from_pretrained(VQGAN_REPO, revision=VQGAN_COMMIT_ID)
+
+    return model, vqgan, tokenizer
+
+
+def encode_images(prompt, model, tokenizer, n_predictions=9):
     # tokenize the prompt
     tokenized_prompt = tokenizer(
         prompt,
@@ -55,7 +59,7 @@ def encode_images(prompt, n_predictions=9):
     return encoded_images
 
 
-def decode(encoded_images):
+def decode(encoded_images, vqgan):
     # decode images
     decoded_images = [
         vqgan.decode_code(encoded_image) for encoded_image in encoded_images
@@ -74,8 +78,9 @@ def decode(encoded_images):
 
 def text_to_image(prompt, n_predictions=9):
 
-    enc_imgs = encode_images(prompt, n_predictions)
-    images = decode(enc_imgs)
+    model, vqgan, tokenizer = setup_model()
+    enc_imgs = encode_images(prompt, model, tokenizer, n_predictions)
+    images = decode(enc_imgs, vqgan)
 
     return images
 
